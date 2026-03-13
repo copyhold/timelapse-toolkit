@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Timelapse</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f8f9fa;
+      color: #212529;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 3rem 3.5rem;
+      box-shadow: 0 2px 16px rgba(0,0,0,.08);
+    }
+
+    header { margin-bottom: 2.5rem; }
+
+    .app-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: #1E6B4A;
+      color: #fff;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      padding: .3rem .8rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1E6B4A;
+      margin-bottom: .4rem;
+    }
+
+    .meta {
+      font-size: .875rem;
+      color: #6c757d;
+    }
+
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1E6B4A;
+      margin: 2rem 0 .6rem;
+      padding-bottom: .3rem;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    p { margin-bottom: .9rem; }
+
+    ul {
+      margin: .4rem 0 .9rem 1.4rem;
+    }
+
+    ul li { margin-bottom: .4rem; }
+
+    .highlight {
+      background: #f0f9f4;
+      border-left: 4px solid #1E6B4A;
+      border-radius: 0 8px 8px 0;
+      padding: .9rem 1.2rem;
+      margin: 1rem 0;
+      font-weight: 500;
+    }
+
+    .contact-box {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.2rem 1.5rem;
+      margin-top: .6rem;
+    }
+
+    .contact-box a {
+      color: #1E6B4A;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .contact-box a:hover { text-decoration: underline; }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e9ecef;
+      font-size: .8rem;
+      color: #adb5bd;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 2rem 1.5rem; }
+      h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="app-badge">&#127774; Timelapse App</div>
+      <h1>Privacy Policy</h1>
+      <p class="meta">Effective date: March 13, 2026 &nbsp;·&nbsp; Last updated: March 13, 2026</p>
+    </header>
+
+    <div class="highlight">
+      Timelapse is a fully on-device app. We do not collect, transmit, or store any personal data on external servers.
+    </div>
+
+    <h2>1. Overview</h2>
+    <p>
+      This Privacy Policy describes how Timelapse ("the App", "we", "us") handles information
+      when you use our Android application. We are committed to protecting your privacy. The App
+      is designed to work entirely on your device — no account is required, and no data is sent
+      to us or any third party.
+    </p>
+
+    <h2>2. Information the App Accesses</h2>
+
+    <p>The App may access the following data on your device, solely to provide its features:</p>
+
+    <ul>
+      <li>
+        <strong>Photos &amp; Camera</strong> — The App captures photos using your device camera.
+        All photos are stored in the App's private storage directory
+        (<code>Android/data/com.timelapse.timelapse/</code>) and are never shared outside the
+        App unless you explicitly use the share feature.
+      </li>
+      <li>
+        <strong>Location (GPS)</strong> — If you enable the GPS option for a project, the App
+        records the latitude and longitude at the moment each photo is taken. This data is stored
+        only on your device inside the App's local database. Location access is off by default
+        and requires your explicit permission.
+      </li>
+      <li>
+        <strong>Notifications</strong> — The App sends local countdown notifications to remind
+        you when it is time to take your next photo. These notifications are generated entirely
+        on your device; no push notification service is used.
+      </li>
+    </ul>
+
+    <h2>3. Data Storage</h2>
+    <p>
+      All data — including project settings, photos, and optional GPS coordinates — is stored
+      locally on your device using the Android app-scoped storage system. This data is:
+    </p>
+    <ul>
+      <li>Never uploaded to any server or cloud service.</li>
+      <li>Not accessible to other apps (Android OS enforces this).</li>
+      <li>Automatically deleted when you uninstall the App.</li>
+    </ul>
+
+    <h2>4. Data We Do Not Collect</h2>
+    <p>We do not collect, access, or process:</p>
+    <ul>
+      <li>Your name, email address, or any account information.</li>
+      <li>Device identifiers, advertising IDs, or analytics data.</li>
+      <li>Crash reports or usage statistics.</li>
+      <li>Any data transmitted over the internet.</li>
+    </ul>
+
+    <h2>5. Third-Party Services</h2>
+    <p>
+      The App does not integrate any third-party analytics, advertising, or tracking SDKs.
+      Video export is performed entirely on-device using FFmpeg. No data leaves your device
+      during export.
+    </p>
+
+    <h2>6. Permissions Explained</h2>
+    <ul>
+      <li><strong>CAMERA</strong> — Required to capture photos for your timelapse projects.</li>
+      <li><strong>ACCESS_FINE_LOCATION / ACCESS_COARSE_LOCATION</strong> — Optional. Only requested when you enable the GPS tag feature for a project. Used solely to attach coordinates to individual photos.</li>
+      <li><strong>POST_NOTIFICATIONS</strong> — Required to send you local countdown reminders (Android 13+).</li>
+      <li><strong>RECEIVE_BOOT_COMPLETED / WAKE_LOCK / FOREGROUND_SERVICE / SCHEDULE_EXACT_ALARM</strong> — Required to keep notification timers running reliably in the background after a device restart.</li>
+    </ul>
+
+    <h2>7. Children's Privacy</h2>
+    <p>
+      The App does not knowingly collect any personal information from anyone, including
+      children under the age of 13. Because no data is collected at all, the App is safe for
+      general use.
+    </p>
+
+    <h2>8. Changes to This Policy</h2>
+    <p>
+      If we update this Privacy Policy, the revised version will be posted at this URL with an
+      updated effective date. We encourage you to review this page periodically. Continued use
+      of the App after changes are posted constitutes acceptance of the updated policy.
+    </p>
+
+    <h2>9. Contact Us</h2>
+    <p>If you have any questions about this Privacy Policy, please contact us:</p>
+    <div class="contact-box">
+      <!-- Replace with your actual contact email -->
+      Email: <a href="mailto:privacy@example.com">privacy@example.com</a>
+    </div>
+
+    <footer>
+      &copy; 2026 Timelapse App. All rights reserved.
+    </footer>
+  </div>
+</body>
+</html>
