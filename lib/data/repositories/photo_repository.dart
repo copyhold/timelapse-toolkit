@@ -26,6 +26,7 @@ class PhotoRepository {
     required String filePath,
     double? latitude,
     double? longitude,
+    double? heading,
   }) async {
     final id = await _db.insertPhoto(
       PhotosCompanion.insert(
@@ -34,6 +35,7 @@ class PhotoRepository {
         takenAt: Value(DateTime.now()),
         latitude: Value(latitude),
         longitude: Value(longitude),
+        heading: Value(heading),
       ),
     );
     return (await _db.getPhotoById(id))!;

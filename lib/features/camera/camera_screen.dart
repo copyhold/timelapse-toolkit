@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart' as p;
@@ -10,6 +12,7 @@ import '../../data/repositories/project_repository.dart';
 import '../../data/repositories/photo_repository.dart';
 import '../../services/notification_service.dart';
 import 'ghost_overlay.dart';
+import 'gps_proximity_indicator.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   final int projectId;
@@ -31,6 +34,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   int _ghostIndex = -1; // -1 = latest
   Project? _project;
   bool _initialized = false;
+  StreamSubscription<CompassEvent>? _compassSub;
+  StreamSubscription<Position>? _positionSub;
+  double? _currentHeading;
+  Position? _currentPosition;
+  Photo? _referencePhoto;
 
   @override
   void initState() {
@@ -44,6 +52,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     _projectPhotos =
         await ref.read(photoRepositoryProvider).getForProject(widget.projectId);
     _updateGhostImage();
+    await _loadReferencePhoto();
+    if (_project?.gpsEnabled == true) {
+      _startLiveStreams();
+    }
 
     _cameras = await availableCameras();
     if (_cameras.isNotEmpty) {
@@ -92,6 +104,48 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
   }
 
+  Future<void> _loadReferencePhoto() async {
+    if (_project?.referencePhotoId != null) {
+      _referencePhoto = await ref
+          .read(photoRepositoryProvider)
+          .getById(_project!.referencePhotoId!);
+    } else if (_projectPhotos.isNotEmpty) {
+      _referencePhoto = _projectPhotos.last;
+    }
+    if (mounted) setState(() {});
+  }
+
+  void _startLiveStreams() {
+    _compassSub = FlutterCompass.events?.listen((event) {
+      if (mounted && event.heading != null) {
+        setState(() => _currentHeading = event.heading);
+      }
+    });
+
+    // Immediately seed _currentPosition so the indicator shows without waiting
+    // for the first stream event (important on emulators and slow GPS starts).
+    Geolocator.getLastKnownPosition().then((pos) {
+      if (mounted && pos != null && _currentPosition == null) {
+        setState(() => _currentPosition = pos);
+      }
+    });
+    Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.medium,
+      timeLimit: const Duration(seconds: 10),
+    ).then((pos) {
+      if (mounted) setState(() => _currentPosition = pos);
+    }).catchError((_) {});
+
+    _positionSub = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.medium,
+        distanceFilter: 2,
+      ),
+    ).listen((pos) {
+      if (mounted) setState(() => _currentPosition = pos);
+    }, onError: (_) {});
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (_controller == null || !_controller!.value.isInitialized) return;
@@ -106,6 +160,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _controller?.dispose();
+    _compassSub?.cancel();
+    _positionSub?.cancel();
     super.dispose();
   }
 
@@ -142,6 +198,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
           // GPS failed silently
         }
       }
+      final capturedHeading = _currentHeading;
 
       // Save to DB
       final photo = await ref.read(photoRepositoryProvider).save(
@@ -149,6 +206,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
             filePath: destPath,
             latitude: lat,
             longitude: lon,
+            heading: capturedHeading,
           );
 
       // Update project's last photo time
@@ -245,6 +303,22 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
               ),
             ),
           ),
+
+          // GPS proximity indicator — bottom-right, above controls
+          if (_project?.gpsEnabled == true &&
+              _referencePhoto?.latitude != null &&
+              _currentPosition != null)
+            Positioned(
+              bottom: 170,
+              right: 16,
+              child: GpsProximityIndicator(
+                refLat: _referencePhoto!.latitude!,
+                refLon: _referencePhoto!.longitude!,
+                currentLat: _currentPosition!.latitude,
+                currentLon: _currentPosition!.longitude,
+                currentHeading: _currentHeading,
+              ),
+            ),
 
           // Bottom controls
           Positioned(

@@ -585,9 +585,15 @@ class $PhotosTable extends Photos with TableInfo<$PhotosTable, Photo> {
   late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
       'longitude', aliasedName, true,
       type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _headingMeta =
+      const VerificationMeta('heading');
+  @override
+  late final GeneratedColumn<double> heading = GeneratedColumn<double>(
+      'heading', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, projectId, filePath, takenAt, latitude, longitude];
+      [id, projectId, filePath, takenAt, latitude, longitude, heading];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -625,6 +631,10 @@ class $PhotosTable extends Photos with TableInfo<$PhotosTable, Photo> {
       context.handle(_longitudeMeta,
           longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta));
     }
+    if (data.containsKey('heading')) {
+      context.handle(_headingMeta,
+          heading.isAcceptableOrUnknown(data['heading']!, _headingMeta));
+    }
     return context;
   }
 
@@ -646,6 +656,8 @@ class $PhotosTable extends Photos with TableInfo<$PhotosTable, Photo> {
           .read(DriftSqlType.double, data['${effectivePrefix}latitude']),
       longitude: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}longitude']),
+      heading: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}heading']),
     );
   }
 
@@ -662,13 +674,15 @@ class Photo extends DataClass implements Insertable<Photo> {
   final DateTime takenAt;
   final double? latitude;
   final double? longitude;
+  final double? heading;
   const Photo(
       {required this.id,
       required this.projectId,
       required this.filePath,
       required this.takenAt,
       this.latitude,
-      this.longitude});
+      this.longitude,
+      this.heading});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -681,6 +695,9 @@ class Photo extends DataClass implements Insertable<Photo> {
     }
     if (!nullToAbsent || longitude != null) {
       map['longitude'] = Variable<double>(longitude);
+    }
+    if (!nullToAbsent || heading != null) {
+      map['heading'] = Variable<double>(heading);
     }
     return map;
   }
@@ -697,6 +714,9 @@ class Photo extends DataClass implements Insertable<Photo> {
       longitude: longitude == null && nullToAbsent
           ? const Value.absent()
           : Value(longitude),
+      heading: heading == null && nullToAbsent
+          ? const Value.absent()
+          : Value(heading),
     );
   }
 
@@ -710,6 +730,7 @@ class Photo extends DataClass implements Insertable<Photo> {
       takenAt: serializer.fromJson<DateTime>(json['takenAt']),
       latitude: serializer.fromJson<double?>(json['latitude']),
       longitude: serializer.fromJson<double?>(json['longitude']),
+      heading: serializer.fromJson<double?>(json['heading']),
     );
   }
   @override
@@ -722,6 +743,7 @@ class Photo extends DataClass implements Insertable<Photo> {
       'takenAt': serializer.toJson<DateTime>(takenAt),
       'latitude': serializer.toJson<double?>(latitude),
       'longitude': serializer.toJson<double?>(longitude),
+      'heading': serializer.toJson<double?>(heading),
     };
   }
 
@@ -731,7 +753,8 @@ class Photo extends DataClass implements Insertable<Photo> {
           String? filePath,
           DateTime? takenAt,
           Value<double?> latitude = const Value.absent(),
-          Value<double?> longitude = const Value.absent()}) =>
+          Value<double?> longitude = const Value.absent(),
+          Value<double?> heading = const Value.absent()}) =>
       Photo(
         id: id ?? this.id,
         projectId: projectId ?? this.projectId,
@@ -739,6 +762,7 @@ class Photo extends DataClass implements Insertable<Photo> {
         takenAt: takenAt ?? this.takenAt,
         latitude: latitude.present ? latitude.value : this.latitude,
         longitude: longitude.present ? longitude.value : this.longitude,
+        heading: heading.present ? heading.value : this.heading,
       );
   Photo copyWithCompanion(PhotosCompanion data) {
     return Photo(
@@ -748,6 +772,7 @@ class Photo extends DataClass implements Insertable<Photo> {
       takenAt: data.takenAt.present ? data.takenAt.value : this.takenAt,
       latitude: data.latitude.present ? data.latitude.value : this.latitude,
       longitude: data.longitude.present ? data.longitude.value : this.longitude,
+      heading: data.heading.present ? data.heading.value : this.heading,
     );
   }
 
@@ -759,14 +784,15 @@ class Photo extends DataClass implements Insertable<Photo> {
           ..write('filePath: $filePath, ')
           ..write('takenAt: $takenAt, ')
           ..write('latitude: $latitude, ')
-          ..write('longitude: $longitude')
+          ..write('longitude: $longitude, ')
+          ..write('heading: $heading')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, projectId, filePath, takenAt, latitude, longitude);
+  int get hashCode => Object.hash(
+      id, projectId, filePath, takenAt, latitude, longitude, heading);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -776,7 +802,8 @@ class Photo extends DataClass implements Insertable<Photo> {
           other.filePath == this.filePath &&
           other.takenAt == this.takenAt &&
           other.latitude == this.latitude &&
-          other.longitude == this.longitude);
+          other.longitude == this.longitude &&
+          other.heading == this.heading);
 }
 
 class PhotosCompanion extends UpdateCompanion<Photo> {
@@ -786,6 +813,7 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
   final Value<DateTime> takenAt;
   final Value<double?> latitude;
   final Value<double?> longitude;
+  final Value<double?> heading;
   const PhotosCompanion({
     this.id = const Value.absent(),
     this.projectId = const Value.absent(),
@@ -793,6 +821,7 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
     this.takenAt = const Value.absent(),
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
+    this.heading = const Value.absent(),
   });
   PhotosCompanion.insert({
     this.id = const Value.absent(),
@@ -801,6 +830,7 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
     this.takenAt = const Value.absent(),
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
+    this.heading = const Value.absent(),
   })  : projectId = Value(projectId),
         filePath = Value(filePath);
   static Insertable<Photo> custom({
@@ -810,6 +840,7 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
     Expression<DateTime>? takenAt,
     Expression<double>? latitude,
     Expression<double>? longitude,
+    Expression<double>? heading,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -818,6 +849,7 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
       if (takenAt != null) 'taken_at': takenAt,
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
+      if (heading != null) 'heading': heading,
     });
   }
 
@@ -827,7 +859,8 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
       Value<String>? filePath,
       Value<DateTime>? takenAt,
       Value<double?>? latitude,
-      Value<double?>? longitude}) {
+      Value<double?>? longitude,
+      Value<double?>? heading}) {
     return PhotosCompanion(
       id: id ?? this.id,
       projectId: projectId ?? this.projectId,
@@ -835,6 +868,7 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
       takenAt: takenAt ?? this.takenAt,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      heading: heading ?? this.heading,
     );
   }
 
@@ -859,6 +893,9 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
     if (longitude.present) {
       map['longitude'] = Variable<double>(longitude.value);
     }
+    if (heading.present) {
+      map['heading'] = Variable<double>(heading.value);
+    }
     return map;
   }
 
@@ -870,7 +907,8 @@ class PhotosCompanion extends UpdateCompanion<Photo> {
           ..write('filePath: $filePath, ')
           ..write('takenAt: $takenAt, ')
           ..write('latitude: $latitude, ')
-          ..write('longitude: $longitude')
+          ..write('longitude: $longitude, ')
+          ..write('heading: $heading')
           ..write(')'))
         .toString();
   }
@@ -1108,6 +1146,7 @@ typedef $$PhotosTableCreateCompanionBuilder = PhotosCompanion Function({
   Value<DateTime> takenAt,
   Value<double?> latitude,
   Value<double?> longitude,
+  Value<double?> heading,
 });
 typedef $$PhotosTableUpdateCompanionBuilder = PhotosCompanion Function({
   Value<int> id,
@@ -1116,6 +1155,7 @@ typedef $$PhotosTableUpdateCompanionBuilder = PhotosCompanion Function({
   Value<DateTime> takenAt,
   Value<double?> latitude,
   Value<double?> longitude,
+  Value<double?> heading,
 });
 
 class $$PhotosTableTableManager extends RootTableManager<
@@ -1141,6 +1181,7 @@ class $$PhotosTableTableManager extends RootTableManager<
             Value<DateTime> takenAt = const Value.absent(),
             Value<double?> latitude = const Value.absent(),
             Value<double?> longitude = const Value.absent(),
+            Value<double?> heading = const Value.absent(),
           }) =>
               PhotosCompanion(
             id: id,
@@ -1149,6 +1190,7 @@ class $$PhotosTableTableManager extends RootTableManager<
             takenAt: takenAt,
             latitude: latitude,
             longitude: longitude,
+            heading: heading,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -1157,6 +1199,7 @@ class $$PhotosTableTableManager extends RootTableManager<
             Value<DateTime> takenAt = const Value.absent(),
             Value<double?> latitude = const Value.absent(),
             Value<double?> longitude = const Value.absent(),
+            Value<double?> heading = const Value.absent(),
           }) =>
               PhotosCompanion.insert(
             id: id,
@@ -1165,6 +1208,7 @@ class $$PhotosTableTableManager extends RootTableManager<
             takenAt: takenAt,
             latitude: latitude,
             longitude: longitude,
+            heading: heading,
           ),
         ));
 }
@@ -1194,6 +1238,11 @@ class $$PhotosTableFilterComposer
 
   ColumnFilters<double> get longitude => $state.composableBuilder(
       column: $state.table.longitude,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get heading => $state.composableBuilder(
+      column: $state.table.heading,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -1235,6 +1284,11 @@ class $$PhotosTableOrderingComposer
 
   ColumnOrderings<double> get longitude => $state.composableBuilder(
       column: $state.table.longitude,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get heading => $state.composableBuilder(
+      column: $state.table.heading,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
